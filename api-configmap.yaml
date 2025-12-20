@@ -4,4 +4,3 @@ metadata:
   name: synergychat-api-configmap
 data:
   API_PORT: "8080"
-
