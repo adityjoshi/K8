@@ -1,0 +1,120 @@
+1. kubectl create deployment 
+
+Deploying an Image
+
+The kubectl create deployment command will create a "deployment" for us. We'll talk more about the nuances of "deployments" later. But to put it simply, we only need to provide two things:
+
+The name of the deployment (this can be anything, it's used to identify the deployment) The ID of the Docker image we want to deploy (it would be a full URL if we weren't hosting the image on Docker Hub, which is the default)
+
+kubectl create deployment synergychat-web --image=docker.io/bootdotdev/synergychat-web:latest
+
+This command will deploy a container built from this Docker image to your local k8s cluster.
+
+kubectl create deployment synergychat-web --image=docker.io/bootdotdev/synergychat-web:latest
+
+
+2. Viewing Deployments
+
+kubectl get deployments
+
+3. Viewing the pods
+
+kubectl get pods
+
+
+4. Port forwarding 
+
+kubectl port-forward PODNAME 8080:8080
+
+PODNAME = the actual pod name
+
+
+5. Get some extra pod info 
+
+kubectl get pods -o wide
+
+
+
+6. Get the pod yaml output 
+
+kubectl get deployment synergychat-web -o yaml
+
+
+7. To edit the pod's yaml 
+
+ kubectl edit deployment synergychat-web
+
+
+8. What is thrashing 
+One of the most common problems you'll run into when working with Kubernetes is Pods that keep crashing and restarting. This is called "thrashing" and it's usually caused by one of a few things:
+
+    > The application recently had a bug introduced in the latest image version
+    > The application is misconfigured and can't start properly
+    > A dependency of the application is misconfigured and the application can't start properly
+    > The application is trying to use too much memory and is being killed by Kubernetes
+
+
+
+
+
+9. What Is “CrashLoopBackoff”?
+
+When a pod's status is CrashLoopBackoff, that means the container is crashing (the program is exiting with error code 1).
+
+Because Kubernetes is all about building self-healing systems, it will automatically restart the container. However, each time it tries to restart the container, if it crashes again, it will wait longer and longer in between restarts. That's why it's called a "backoff".
+
+To fix a thrashing pod, you need to find out why it's crashing. We'll do that in a later lesson.
+
+
+
+10. What is a config map 
+
+A config map allows us decouple our configs from our container images, which is important because we don't want to have to rebuild our images every time we want to change a config value.
+
+11. What is Services ?
+
+Services provide a stable endpoints for the pods. They are an abstraction used to provide a stable endpoint and load balance traffic across a group of pods. The service will always be available if the pods are destroyed or created.
+
+12. How to get a service 
+
+kubectl get svc web-service(name of the service) -o yaml
+
+13. Node Port 
+
+It helps us in exposing our seervice to the external world. It exposes every nodes ip on a static port, with the help of this external user can access our app.
+
+
+14. What is a gateway ?
+A Gateway describes an instance of traffic handling infrastructure. It defines a network endpoint that can be used for processing traffic, i.e. filtering, balancing, splitting, etc. for backends such as a Service. For example, a Gateway may represent a cloud load balancer or an in-cluster proxy server that is configured to accept HTTP traffic.
+
+
+15. How to describe if the pods are working
+
+kubectl describe pod <pod name>
+
+16. What if deployment doesn't work properply ?
+
+then restart the deployment and everything will work
+
+kubectl rollout restart deployment synergychat-crawler 
+
+17. How to log multiple containers inside a single pod
+kubectl logs <podname> --all-containers
+
+
+18. What are namespaces?
+Namespaces are a way to isolate cluster resources into groups. They're a bit like directories on your computer, but instead of containing files, they contain Kubernetes objects. As you've already learned, every resource in Kubernetes has a name.
+
+command - kubectl get namespaces
+
+
+19. Create a namespaces ?
+
+kubectl create ns <name>
+
+
+20. Resource Limit Setting 
+
+We can set the resource limit in the deploymenmt file of the kubernetes as we don't want a pod to hog all the CPU and RAM on its node, suffocating all the other pods on the node.
+
+The MEGABYTES environment variable tells the testram app how much memory to allocate, thedeployment spec sets the kubernetes level memory 
